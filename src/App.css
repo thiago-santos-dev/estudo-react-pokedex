@@ -136,3 +136,68 @@ body {
 .tipo.poison { background-color: #a040a0; color: white; }
 .tipo.normal { background-color: #a8a878; color: black; }
 .tipo.electric { background-color: #f8d030; color: black; }
+
+/* ... Mantenha o código anterior ... */
+
+/* Ajuste no Cartão para aceitar cores de fundo dinâmicas melhor */
+.cartao-pokemon {
+  /* Removemos a cor fixa background-color: #1e1e1e daqui, pois agora vem do React */
+  /* background-color: #1e1e1e; <--- REMOVIDO/SOBSCRITO PELO INLINE STYLE */
+  
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borda mais suave */
+  /* O resto continua igual */
+  color: #e0e0e0;
+  border-radius: 15px;
+  padding: 20px;
+  width: 150px; /* Largura fixa para Desktop */
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+  transition: transform 0.2s, filter 0.2s; /* Adicionamos filter na transição */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden; /* Garante que nada saia do card */
+}
+
+/* Efeito de brilho ao passar o mouse */
+.cartao-pokemon:hover {
+  transform: translateY(-5px);
+  filter: brightness(1.2); /* Deixa a cor de fundo 20% mais brilhante */
+  border-color: #ffcb05;
+}
+
+/* --- RESPONSIVIDADE (MOBILE) --- */
+/* Tudo aqui dentro só funciona se a tela for menor que 600px (Celulares) */
+@media (max-width: 600px) {
+  
+  .titulo {
+    font-size: 1.8rem; /* Título menor */
+  }
+
+  .pokedex-grid {
+    gap: 10px; /* Menos espaço entre os cards */
+    padding: 10px;
+  }
+
+  .cartao-pokemon {
+    width: 42%; /* Ocupa quase metade da tela (2 por linha) */
+    padding: 10px; /* Menos preenchimento interno */
+  }
+
+  .cartao-pokemon img {
+    width: 80px; /* Imagem um pouco menor */
+  }
+
+  .cartao-pokemon h3 {
+    font-size: 1rem; /* Nome menor */
+  }
+  
+  /* Modal responsivo */
+  .modal-conteudo {
+    width: 85%;
+    padding: 20px;
+  }
+  
+  .modal-conteudo img {
+    width: 140px;
+  }
+}

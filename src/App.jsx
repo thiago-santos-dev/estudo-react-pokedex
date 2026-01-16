@@ -6,22 +6,38 @@ function App() {
   const [busca, setBusca] = useState('')
   const [pokemonSelecionado, setPokemonSelecionado] = useState(null)
   const [carregandoVisual, setCarregandoVisual] = useState(false)
-
-  // MUDANÇA 1: Trocamos useState por useRef para o controle da paginação
-  // Isso garante que o valor seja sempre o ATUAL, não o antigo.
-  const offsetRef = useRef(0) 
   
-  // Controle para não chamar duas vezes
+  const offsetRef = useRef(0) 
   const carregandoRef = useRef(false)
 
+  // 1. [NOVO] Tabela de Cores (Tons escuros para combinar com o Dark Mode)
+  const CORES_FUNDO = {
+    grass: '#204020',    // Verde Escuro
+    fire: '#402020',     // Vermelho Escuro
+    water: '#202840',    // Azul Escuro
+    bug: '#303520',      // Verde Inseto Escuro
+    normal: '#333333',   // Cinza
+    poison: '#352035',   // Roxo Escuro
+    electric: '#403d20', // Amarelo/Marrom Escuro
+    ground: '#403520',   // Marrom Terra
+    fairy: '#402035',    // Rosa Escuro
+    fighting: '#402520', // Laranja Escuro
+    psychic: '#352030',  // Rosa Psíquico
+    rock: '#353525',     // Pedra
+    ghost: '#252035',    // Fantasma
+    ice: '#203535',      // Gelo
+    dragon: '#252040',   // Dragão
+    dark: '#202020',     // Noturno
+    steel: '#303035',    // Aço
+    flying: '#253040',   // Voador
+  }
+
   useEffect(() => {
-    carregarPokemons() // Carrega os primeiros 50
+    carregarPokemons()
 
     const handleScroll = () => {
       const alturaPagina = document.documentElement.offsetHeight
       const scrollAtual = window.innerHeight + document.documentElement.scrollTop
-
-      // Se chegou perto do fim (200px)
       if (scrollAtual >= alturaPagina - 200) {
         carregarPokemons()
       }
@@ -36,10 +52,7 @@ function App() {
     carregandoRef.current = true
     setCarregandoVisual(true)
 
-    // MUDANÇA 2: Lemos o valor ATUAL do Ref
     const offsetAtual = offsetRef.current
-
-    // Trava de segurança para não buscar infinitamente (ex: paramos em 1000)
     if (offsetAtual >= 1000) {
         carregandoRef.current = false;
         setCarregandoVisual(false);
@@ -47,8 +60,6 @@ function App() {
     }
 
     const arrayDePromessas = []
-    
-    // MUDANÇA 3: Usamos o valor do Ref para calcular o loop
     for (let i = offsetAtual + 1; i <= offsetAtual + 50; i++) {
       arrayDePromessas.push(
         fetch(`https://pokeapi.co/api/v2/pokemon/${i}`).then(res => res.json())
@@ -58,10 +69,7 @@ function App() {
     try {
       const novosPokemons = await Promise.all(arrayDePromessas)
       setPokemons(listaAntiga => [...listaAntiga, ...novosPokemons])
-      
-      // MUDANÇA 4: Atualizamos o Ref para a próxima vez
       offsetRef.current += 50
-      
     } catch (error) {
       console.error("Erro ao buscar lote", error)
     } finally {
@@ -76,7 +84,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="titulo">Pokédex React Infinita</h1>
+      <h1 className="titulo">Pokédex React</h1>
 
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <input 
@@ -89,21 +97,30 @@ function App() {
       </div>
 
       <div className="pokedex-grid">
-        {pokemonsFiltrados.map((item) => (
-          <div 
-            key={item.id} 
-            className="cartao-pokemon"
-            onClick={() => setPokemonSelecionado(item)}
-          >
-            <img src={item.sprites.front_default} alt={item.name} loading="lazy" />
-            <p>#{String(item.id).padStart(3, '0')}</p> 
-            <h3>{item.name}</h3>
-          </div>
-        ))}
+        {pokemonsFiltrados.map((item) => {
+          // 2. [NOVO] Descobrir a cor baseada no primeiro tipo do Pokémon
+          const tipoPrincipal = item.types[0].type.name
+          const corFundo = CORES_FUNDO[tipoPrincipal] || '#1e1e1e' // Se não achar, usa cinza padrão
+
+          return (
+            <div 
+              key={item.id} 
+              className="cartao-pokemon"
+              // 3. [NOVO] Aplicar a cor diretamente no estilo
+              style={{ backgroundColor: corFundo }}
+              onClick={() => setPokemonSelecionado(item)}
+            >
+              <img src={item.sprites.front_default} alt={item.name} loading="lazy" />
+              <p>#{String(item.id).padStart(3, '0')}</p> 
+              <h3>{item.name}</h3>
+            </div>
+          )
+        })}
       </div>
 
       {carregandoVisual && <p style={{textAlign: 'center', padding: 20}}>Carregando mais...</p>}
 
+      {/* MODAL MANTIDO IGUAL */}
       {pokemonSelecionado && (
         <div className="modal-overlay" onClick={() => setPokemonSelecionado(null)}>
           <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
