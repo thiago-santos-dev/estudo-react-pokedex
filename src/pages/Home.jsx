@@ -1,46 +1,55 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom' // <--- IMPORTANTE PARA O CLIQUE
+import { useNavigate } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 import PokemonCard from '../components/PokemonCard'
 import { usePokemonList } from '../hooks/usePokemonList'
 
 function Home() {
-  // Chamando nosso Hook
   const { pokemons, carregandoVisual } = usePokemonList()
-  
   const [busca, setBusca] = useState('')
-  const navigate = useNavigate() // <--- O "MOTORISTA" DA NAVEGAÇÃO
+  const navigate = useNavigate()
 
-  // Filtro visual
   const pokemonsFiltrados = pokemons.filter(pokemon => 
     pokemon.name.toLowerCase().includes(busca.toLowerCase())
   )
 
-  // Função que o card chama quando é clicado
   const abrirDetalhes = (pokemon) => {
     navigate(`/pokemon/${pokemon.id}`)
   }
 
   return (
-    <div className="container">
-      <h1 className="titulo">Pokédex - Home</h1>
+    // Fundo cinza escuro, texto branco, altura mínima da tela toda
+    <div className="min-h-screen bg-slate-900 text-white p-8">
+      
+      {/* Título Amarelo e Centralizado */}
+      <h1 className="text-4xl font-bold text-center text-yellow-400 mb-8 tracking-wider">
+        POKÉDEX
+      </h1>
       
       <SearchBar busca={busca} setBusca={setBusca} />
 
-      <div className="pokedex-grid">
+      {/* GRID RESPONSIVO DO TAILWIND:
+         - grid-cols-1: 1 coluna no celular
+         - sm:grid-cols-2: 2 colunas em tablets pequenos
+         - md:grid-cols-3: 3 colunas em tablets/laptops
+         - lg:grid-cols-4: 4 colunas em monitores grandes
+         - gap-6: Espaço entre os cards
+         - mx-auto max-w-7xl: Centraliza o grid na tela
+      */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-auto max-w-7xl">
         {pokemonsFiltrados.map((item) => (
           <PokemonCard 
             key={item.id} 
             pokemon={item} 
-            aoClicar={abrirDetalhes} // Passando a função para o card
+            aoClicar={abrirDetalhes} 
           />
         ))}
       </div>
 
       {carregandoVisual && (
-        <p style={{textAlign: 'center', padding: 20, color: 'white'}}>
-          Carregando mais...
-        </p>
+        <div className="text-center mt-8 text-xl animate-pulse">
+          Carregando mais Pokémons...
+        </div>
       )}
     </div>
   )

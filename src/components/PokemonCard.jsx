@@ -1,32 +1,56 @@
-// src/components/PokemonCard.jsx
-
-// Tabela de cores movida para cá (ela pertence ao cartão visualmente)
-const CORES_FUNDO = {
-  grass: '#204020',    fire: '#402020',     water: '#202840',
-  bug: '#303520',      normal: '#333333',   poison: '#352035',
-  electric: '#403d20', ground: '#403520',   fairy: '#402035',
-  fighting: '#402520', psychic: '#352030',  rock: '#353525',
-  ghost: '#252035',    ice: '#203535',      dragon: '#252040',
-  dark: '#202020',     steel: '#303035',    flying: '#253040',
-}
-
 function PokemonCard({ pokemon, aoClicar }) {
+    // Definindo cores dinâmicas para o fundo do card (opcional, mas legal)
+    const tipo = pokemon.types[0].type.name;
+    const bgColors = {
+        grass: 'bg-green-900',
+        fire: 'bg-red-900',
+        water: 'bg-blue-900',
+        bug: 'bg-lime-900',
+        normal: 'bg-gray-700',
+        electric: 'bg-yellow-900',
+        // fallback para cinza escuro
+        default: 'bg-gray-800'
+    }
+    const corFundo = bgColors[tipo] || bgColors.default;
+
+    return (
+      <div 
+        className={`
+            ${corFundo} 
+            rounded-2xl 
+            p-6 
+            shadow-lg 
+            transform hover:scale-105 hover:shadow-2xl 
+            transition duration-300 
+            cursor-pointer 
+            border border-gray-700
+            flex flex-col items-center
+        `}
+        onClick={() => aoClicar(pokemon)}
+      >
+        <span className="self-end text-gray-400 font-mono text-sm">
+            #{String(pokemon.id).padStart(3, '0')}
+        </span>
+
+        <img 
+          src={pokemon.sprites.other['official-artwork'].front_default} 
+          alt={pokemon.name} 
+          className="w-32 h-32 object-contain drop-shadow-md z-10"
+        />
+        
+        <h2 className="text-2xl font-bold capitalize mt-2 text-white drop-shadow-sm">
+            {pokemon.name}
+        </h2>
+        
+        <div className="flex gap-2 mt-3">
+            {pokemon.types.map(t => (
+                <span key={t.type.name} className="px-3 py-1 bg-white/20 rounded-full text-xs font-bold uppercase tracking-wide text-white">
+                    {t.type.name}
+                </span>
+            ))}
+        </div>
+      </div>
+    )
+  }
   
-  // Lógica da cor interna do componente
-  const tipoPrincipal = pokemon.types[0].type.name
-  const corFundo = CORES_FUNDO[tipoPrincipal] || '#1e1e1e'
-
-  return (
-    <div 
-      className="cartao-pokemon"
-      style={{ backgroundColor: corFundo }}
-      onClick={() => aoClicar(pokemon)} // Avisa o pai que foi clicado
-    >
-      <img src={pokemon.sprites.front_default} alt={pokemon.name} loading="lazy" />
-      <p>#{String(pokemon.id).padStart(3, '0')}</p> 
-      <h3>{pokemon.name}</h3>
-    </div>
-  )
-}
-
-export default PokemonCard
+  export default PokemonCard

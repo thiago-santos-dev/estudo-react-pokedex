@@ -1,6 +1,5 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './App.css'
 
 // Importando as PÁGINAS que criamos
 import Home from './pages/Home'

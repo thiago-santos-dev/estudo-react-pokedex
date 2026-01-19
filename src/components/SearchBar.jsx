@@ -1,17 +1,22 @@
 // src/components/SearchBar.jsx
-
-// PROPS: São as "opções" que este componente recebe do pai (App)
-// Aqui recebemos o texto atual (busca) e a função para atualizar (setBusca)
 function SearchBar({ busca, setBusca }) {
-  
   return (
-    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+    <div className="flex justify-center mb-8 mt-5">
       <input 
         type="text" 
-        placeholder="Pesquisar..."
-        className="barra-busca"
+        placeholder="Pesquisar Pokémon..."
+        className="
+            w-full max-w-md 
+            p-4 
+            bg-white text-gray-900 placeholder-gray-500
+            rounded-full 
+            border-2 border-gray-300 
+            shadow-lg 
+            font-bold 
+            focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-200
+            transition duration-300
+        "
         value={busca}
-        // Quando digitar, avisa o pai (App) que mudou
         onChange={(e) => setBusca(e.target.value)}
       />
     </div>
