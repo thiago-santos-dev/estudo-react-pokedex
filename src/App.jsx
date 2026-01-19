@@ -1,25 +1,21 @@
-// src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-
-// Importando as PÁGINAS que criamos
+import { FavoritesProvider } from './contexts/FavoritesContext'
 import Home from './pages/Home'
 import Detalhes from './pages/Detalhes'
+import Favoritos from './pages/Favoritos'
 
 function App() {
   return (
-    // BrowserRouter: Habilita o sistema de rotas no App inteiro
-    <BrowserRouter>
-      {/* Routes: Onde definimos os caminhos */}
-      <Routes>
-        
-        {/* Quando o caminho for "/" (raiz), mostra a Home */}
-        <Route path="/" element={<Home />} />
-        
-        {/* Quando o caminho for "/detalhes", mostra a Detalhes */}
-        <Route path="/pokemon/:id" element={<Detalhes />} />
-
-      </Routes>
-    </BrowserRouter>
+    <FavoritesProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {/* 2. Adicione a nova rota aqui: */}
+          <Route path="/favoritos" element={<Favoritos />} /> 
+          <Route path="/pokemon/:id" element={<Detalhes />} />
+        </Routes>
+      </BrowserRouter>
+    </FavoritesProvider>
   )
 }
 

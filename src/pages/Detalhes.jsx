@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { usePokemonDetails } from '../hooks/usePokemonDetails'
+import HeartButton from '../components/HeartButton'
 
 function Detalhes() {
   const { id } = useParams()
@@ -7,9 +8,9 @@ function Detalhes() {
 
   if (!pokemon) {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
-            <h2 className="text-2xl animate-pulse font-bold">Carregando dados...</h2>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+        <h2 className="text-2xl animate-pulse font-bold">Carregando dados...</h2>
+      </div>
     )
   }
 
@@ -27,13 +28,13 @@ function Detalhes() {
   }
 
   return (
-    <div 
-        className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
-        style={{ backgroundColor: corPrincipal }}
+    <div
+      className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
+      style={{ backgroundColor: corPrincipal }}
     >
-      
-      <Link 
-        to="/" 
+
+      <Link
+        to="/"
         className="absolute top-6 left-6 bg-white text-black hover:bg-gray-200 px-6 py-2 rounded-full font-bold transition-all duration-300 z-50 shadow-lg border-2 border-white"
       >
         ⬅ Voltar
@@ -48,84 +49,87 @@ function Detalhes() {
             shadow-2xl border border-white/30
             animate-fade-in-up
       ">
-        
+
         {/* --- LADO ESQUERDO --- */}
         <div className="flex-1 flex flex-col items-center">
-            <img 
-                src={pokemon.sprites.other['official-artwork'].front_default} 
-                alt={pokemon.name} 
-                className="w-full max-w-sm drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)] animate-bounce-slow"
-            />
-            
-            {/* MUDANÇA 2: Texto Branco Puro e Sombra Forte para leitura */}
-            <h1 className="text-5xl md:text-6xl font-black text-white capitalize mt-4 drop-shadow-md text-center tracking-wide">
-                {pokemon.name}
-            </h1>
-            
-            <span className="mt-2 bg-white text-black px-6 py-1 rounded-full font-bold text-xl shadow-lg">
-                #{String(pokemon.id).padStart(3, '0')}
-            </span>
+          <img
+            src={pokemon.sprites.other['official-artwork'].front_default}
+            alt={pokemon.name}
+            className="w-full max-w-sm drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)] animate-bounce-slow"
+          />
 
-            <div className="flex gap-4 mt-6">
+          {/* Nome e Coração lado a lado */}
+          <div className="flex items-center gap-4 mt-4">
+            <h1 className="text-5xl md:text-6xl font-black text-white capitalize drop-shadow-md text-center tracking-wide">
+              {pokemon.name}
+            </h1>
+            <HeartButton pokemon={pokemon} className="text-white hover:text-red-500" />
+          </div>
+
+          <span className="mt-2 bg-white text-black px-6 py-1 rounded-full font-bold text-xl shadow-lg">
+            #{String(pokemon.id).padStart(3, '0')}
+          </span>
+
+          <div className="flex gap-4 mt-6">
             {pokemon.types.map((t) => (
-                // MUDANÇA 3: Etiquetas mais brilhantes
-                <span key={t.type.name} className="px-6 py-2 bg-white text-black rounded-full font-bold uppercase tracking-widest shadow-lg border-2 border-white/50">
-                    {t.type.name}
-                </span>
+              // MUDANÇA 3: Etiquetas mais brilhantes
+              <span key={t.type.name} className="px-6 py-2 bg-white text-black rounded-full font-bold uppercase tracking-widest shadow-lg border-2 border-white/50">
+                {t.type.name}
+              </span>
             ))}
-            </div>
+          </div>
         </div>
-        
+
         {/* --- LADO DIREITO --- */}
         <div className="flex-1 w-full text-white">
-            
-            <div className="grid grid-cols-3 gap-4 bg-white/10 p-6 rounded-3xl mb-8 border border-white/20 text-center shadow-inner">
-                {/* MUDANÇA 4: Rótulos agora são cinza claro (text-gray-200) e valores Branco Puro */}
-                <div>
-                    <h3 className="text-sm font-bold uppercase text-gray-200 mb-2 tracking-wider">Altura</h3>
-                    <p className="text-3xl font-black text-white drop-shadow-sm">{pokemon.height / 10} m</p>
-                </div>
-                <div>
-                    <h3 className="text-sm font-bold uppercase text-gray-200 mb-2 tracking-wider">Peso</h3>
-                    <p className="text-3xl font-black text-white drop-shadow-sm">{pokemon.weight / 10} kg</p>
-                </div>
-                <div>
-                    <h3 className="text-sm font-bold uppercase text-gray-200 mb-2 tracking-wider">Habilidade</h3>
-                    <p className="text-xl font-bold capitalize text-white truncate">{pokemon.abilities[0].ability.name.replace('-', ' ')}</p>
-                </div>
-            </div>
 
+          <div className="grid grid-cols-3 gap-4 bg-white/10 p-6 rounded-3xl mb-8 border border-white/20 text-center shadow-inner">
+            {/* MUDANÇA 4: Rótulos agora são cinza claro (text-gray-200) e valores Branco Puro */}
             <div>
-                <h2 className="text-2xl font-black mb-6 border-l-8 border-white pl-4 uppercase tracking-widest text-white drop-shadow-md">
-                    Status Base
-                </h2>
-                
-                <div className="flex flex-col gap-5">
-                    {pokemon.stats.map((statItem) => {
-                        const largura = Math.min((statItem.base_stat / 150) * 100, 100);
-                        let cor = '#ff5e57';
-                        if (statItem.base_stat >= 60) cor = '#ffdd59';
-                        if (statItem.base_stat >= 90) cor = '#4cd137';
-
-                        return (
-                        <div key={statItem.stat.name} className="flex items-center gap-4">
-                            {/* MUDANÇA 5: Nomes dos Stats maiores e brancos */}
-                            <span className="w-16 font-bold text-right text-sm text-white uppercase tracking-wider">
-                                {formatarNomeStat(statItem.stat.name)}
-                            </span>
-                            <span className="w-10 font-bold text-right text-white text-lg">{statItem.base_stat}</span>
-                            
-                            <div className="flex-1 h-4 bg-gray-700/50 rounded-full overflow-hidden border border-white/10">
-                                <div 
-                                    className="h-full rounded-full shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-                                    style={{ width: `${largura}%`, backgroundColor: cor, transition: 'width 1s ease-out' }}
-                                ></div>
-                            </div>
-                        </div>
-                        )
-                    })}
-                </div>
+              <h3 className="text-sm font-bold uppercase text-gray-200 mb-2 tracking-wider">Altura</h3>
+              <p className="text-3xl font-black text-white drop-shadow-sm">{pokemon.height / 10} m</p>
             </div>
+            <div>
+              <h3 className="text-sm font-bold uppercase text-gray-200 mb-2 tracking-wider">Peso</h3>
+              <p className="text-3xl font-black text-white drop-shadow-sm">{pokemon.weight / 10} kg</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold uppercase text-gray-200 mb-2 tracking-wider">Habilidade</h3>
+              <p className="text-xl font-bold capitalize text-white truncate">{pokemon.abilities[0].ability.name.replace('-', ' ')}</p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-black mb-6 border-l-8 border-white pl-4 uppercase tracking-widest text-white drop-shadow-md">
+              Status Base
+            </h2>
+
+            <div className="flex flex-col gap-5">
+              {pokemon.stats.map((statItem) => {
+                const largura = Math.min((statItem.base_stat / 150) * 100, 100);
+                let cor = '#ff5e57';
+                if (statItem.base_stat >= 60) cor = '#ffdd59';
+                if (statItem.base_stat >= 90) cor = '#4cd137';
+
+                return (
+                  <div key={statItem.stat.name} className="flex items-center gap-4">
+                    {/* MUDANÇA 5: Nomes dos Stats maiores e brancos */}
+                    <span className="w-16 font-bold text-right text-sm text-white uppercase tracking-wider">
+                      {formatarNomeStat(statItem.stat.name)}
+                    </span>
+                    <span className="w-10 font-bold text-right text-white text-lg">{statItem.base_stat}</span>
+
+                    <div className="flex-1 h-4 bg-gray-700/50 rounded-full overflow-hidden border border-white/10">
+                      <div
+                        className="h-full rounded-full shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                        style={{ width: `${largura}%`, backgroundColor: cor, transition: 'width 1s ease-out' }}
+                      ></div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
 
         </div>
       </div>
