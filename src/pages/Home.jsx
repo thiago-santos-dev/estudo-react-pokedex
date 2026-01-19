@@ -1,71 +1,22 @@
-// src/pages/Home.jsx
-import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom' // Importante para navegar
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom' // <--- IMPORTANTE PARA O CLIQUE
 import SearchBar from '../components/SearchBar'
 import PokemonCard from '../components/PokemonCard'
+import { usePokemonList } from '../hooks/usePokemonList'
 
 function Home() {
-  const [pokemons, setPokemons] = useState([])
-  const [busca, setBusca] = useState('')
-  const [carregandoVisual, setCarregandoVisual] = useState(false)
+  // Chamando nosso Hook
+  const { pokemons, carregandoVisual } = usePokemonList()
   
-  // Hook de navegação
-  const navigate = useNavigate()
+  const [busca, setBusca] = useState('')
+  const navigate = useNavigate() // <--- O "MOTORISTA" DA NAVEGAÇÃO
 
-  const offsetRef = useRef(0) 
-  const carregandoRef = useRef(false)
-
-  useEffect(() => {
-    if (pokemons.length > 0) return;
-    
-    carregarPokemons()
-
-    const handleScroll = () => {
-      const alturaPagina = document.documentElement.offsetHeight
-      const scrollAtual = window.innerHeight + document.documentElement.scrollTop
-      if (scrollAtual >= alturaPagina - 200) carregarPokemons()
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, []) 
-
-  const carregarPokemons = async () => {
-    if (carregandoRef.current) return
-    carregandoRef.current = true
-    setCarregandoVisual(true)
-
-    const offsetAtual = offsetRef.current
-    if (offsetAtual >= 1000) {
-        carregandoRef.current = false;
-        setCarregandoVisual(false);
-        return;
-    }
-
-    const arrayDePromessas = []
-    for (let i = offsetAtual + 1; i <= offsetAtual + 50; i++) {
-      arrayDePromessas.push(
-        fetch(`https://pokeapi.co/api/v2/pokemon/${i}`).then(res => res.json())
-      )
-    }
-
-    try {
-      const novosPokemons = await Promise.all(arrayDePromessas)
-      setPokemons(prev => [...prev, ...novosPokemons])
-      offsetRef.current += 50
-    } catch (error) {
-      console.error("Erro", error)
-    } finally {
-      carregandoRef.current = false
-      setCarregandoVisual(false)
-    }
-  }
-
+  // Filtro visual
   const pokemonsFiltrados = pokemons.filter(pokemon => 
     pokemon.name.toLowerCase().includes(busca.toLowerCase())
   )
 
-  // Função corrigida para navegar
+  // Função que o card chama quando é clicado
   const abrirDetalhes = (pokemon) => {
     navigate(`/pokemon/${pokemon.id}`)
   }
@@ -73,6 +24,7 @@ function Home() {
   return (
     <div className="container">
       <h1 className="titulo">Pokédex - Home</h1>
+      
       <SearchBar busca={busca} setBusca={setBusca} />
 
       <div className="pokedex-grid">
@@ -80,12 +32,16 @@ function Home() {
           <PokemonCard 
             key={item.id} 
             pokemon={item} 
-            aoClicar={abrirDetalhes} 
+            aoClicar={abrirDetalhes} // Passando a função para o card
           />
         ))}
       </div>
 
-      {carregandoVisual && <p style={{textAlign: 'center', padding: 20}}>Carregando mais...</p>}
+      {carregandoVisual && (
+        <p style={{textAlign: 'center', padding: 20, color: 'white'}}>
+          Carregando mais...
+        </p>
+      )}
     </div>
   )
 }
